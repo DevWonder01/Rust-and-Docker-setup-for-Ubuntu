@@ -1,3 +1,4 @@
 Rust + Docker Development Environment Setup
 
-chmod +x setup_dev_env.sh
+chmod +x setup.sh
+./setup.sh

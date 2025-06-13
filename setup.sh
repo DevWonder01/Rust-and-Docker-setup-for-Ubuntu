@@ -58,8 +58,6 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 echo "Docker GPG key added."
 
 # Set up the stable Docker repository
-# Note: The 'echo' command for adding the repository was duplicated in the original input.
-# This script includes it only once.
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
@@ -83,14 +81,19 @@ sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-
 
 # Apply executable permissions
 sudo chmod +x /usr/local/bin/docker-compose
-
-# Change ownership (optional but good practice)
-sudo chown "$USER" /usr/local/bin/docker-compose
 echo "Docker Compose downloaded and permissions set."
 
-# Verify Docker Compose installation
-echo "Verifying Docker Compose installation:"
+# --- 7. Verification ---
+echo "--- Verifying Installations ---"
+echo "Rustc version:"
+rustc --version
+echo "Cargo version:"
+cargo --version
+echo "Docker version:"
+docker --version
+echo "Docker Compose version:"
 docker-compose --version
 
 echo "Development environment setup complete!"
-echo "Remember to log out and log back in (or reboot) to apply Docker group changes."
+echo "Remember to log out and log back in (or reboot) to apply Docker group changes and use Docker without 'sudo'."
+```

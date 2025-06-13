@@ -1,9 +1,20 @@
+# --- 1. Install Rustup ---
+# This command downloads and runs the rustup installer.
+# It will guide you through the installation process (usually default is fine).
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Source the cargo environment file to make cargo and rustc available in the current shell.
+# You'll typically need to run this command (or restart your terminal) after installation.
 source "$HOME/.cargo/env"
 
+# --- 2. Install General Build Tools and Dependencies ---
+# Update package lists
 sudo apt update
+
+# Install build-essential for C/C++ compilation (required by some Rust crates)
 sudo apt install build-essential
 
+# Install Perl, SSL development libraries, and pkg-config (common for various dev tools)
 sudo apt-get install -y \
     perl \
     perl-base \
@@ -12,32 +23,50 @@ sudo apt-get install -y \
     libssl-dev \
     pkg-config
 
-
+# Install libudev-dev (often required for hardware interaction or USB devices)
 sudo apt-get install libudev-dev
-# Install required packages
-sudo apt-get install \
+
+# --- 3. Install Docker Engine and Docker Compose ---
+# Install prerequisites for Docker installation
+sudo apt-get install -y \
     ca-certificates \
     curl \
     gnupg \
     lsb-release
 
-# Add Docker repository
+# Add Docker's GPG key (crucial for verifying packages)
+# This uses the new recommended way to store the key in /etc/apt/keyrings
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg # Ensure readable by apt
+
+# Add Docker APT repository (only once)
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# Install Docker
+# Update package lists again to include the new Docker repository
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
 
-# Add user to docker group
+# Install Docker Engine, Docker CLI, and containerd.io
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Add the current user to the 'docker' group
+# This allows you to run Docker commands without 'sudo'.
+# YOU MUST LOG OUT AND LOG BACK IN (or reboot) FOR THIS CHANGE TO TAKE EFFECT!
+sudo usermod -aG docker "$USER"
 
-#install docker compose
+# Install Docker Compose
+# Downloads the Docker Compose binary to /usr/local/bin
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-#apply permission
+# Apply execute permission to Docker Compose
 sudo chmod +x /usr/local/bin/docker-compose
+
+# (Optional) Apply execute permission to the main Docker binary
+# apt-get usually handles this, but it doesn't hurt to be explicit
+sudo chmod +x /usr/local/bin/docker
+
+echo "--- Installation commands completed ---"
+echo "Please log out and log back in (or reboot) for the Docker group changes to take effect."
+echo "You can verify installations with: rustc --version, cargo --version, docker run hello-world, docker-compose --version"

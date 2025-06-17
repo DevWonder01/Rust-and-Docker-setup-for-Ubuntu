@@ -14,6 +14,8 @@ sudo apt update
 # Install build-essential for C/C++ compilation (required by some Rust crates)
 sudo apt install build-essential
 
+sudo apt-get update && sudo apt-get upgrade
+
 # Install Perl, SSL development libraries, and pkg-config (common for various dev tools)
 sudo apt-get install -y \
     perl \

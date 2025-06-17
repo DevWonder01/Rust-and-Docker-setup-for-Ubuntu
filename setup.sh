@@ -22,7 +22,8 @@ echo "Rust installation complete. PATH updated for current session."
 # --- 2. Install Essential Build Tools ---
 echo "--- Installing Essential Build Tools ---"
 # Update package lists
-sudo apt update
+sudo apt-get update && sudo apt-get upgrade
+
 
 # Install build-essential (includes gcc, g++, make)
 sudo apt install -y build-essential
